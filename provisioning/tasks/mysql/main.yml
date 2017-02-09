@@ -1,0 +1,22 @@
+- name:     Check if MySQL is already configured
+  stat:     path="{{ tasks['mysql']['config']['mycnf'] }}"
+  register: mysqlConfig
+
+- name:     Configure MySQL
+  copy:     src=templates/my.cnf dest="{{ tasks['mysql']['config']['mycnf'] }}" owner=root group=root mode=0644
+  register: mysql
+  when:     mysqlConfig.stat.exists == False
+  become:   yes
+
+- name:    Restart MySQL
+  service: name=mysql state=restarted
+  when:    mysql.changed
+  become:  yes
+
+- name:    Create users and databases defined in the sites section of config.yml
+  include: database-install.yml
+  loop_control:
+    loop_var: site
+  with_items: "{{ tasks['sites']['vhosts'] }}"
+  when: tasks['sites']['vhosts'][0] is defined
+

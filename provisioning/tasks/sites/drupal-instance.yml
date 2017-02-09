@@ -1,0 +1,27 @@
+- name:  Download Drupal {{ version }} sources
+  shell: drush dl --default-major={{ version }} --destination=/tmp --drupal-project-rename=drupal{{ version }}-sources creates=/tmp/drupal{{ version }}-sources
+
+- name: Remove previous files from {{ site.domain }} root
+  file: path='{{ ansible_env.HOME }}/www/{{ site.domain }}' state=absent
+
+- name:  Copy Drupal {{ version }} sources to {{ site.domain }} root directory
+  shell: cp -r /tmp/drupal{{ version }}-sources {{ ansible_env.HOME }}/www/{{ site.domain }}
+
+- name:     Define arguments for drush site-install
+  set_fact: drush_si_args="{{ site.drush_si_args }}"
+  when:     site.drush_si_args is defined
+
+- name:     Define default arguments for drush site-install
+  set_fact: drush_si_args='--account-pass=admin  --site-name="{{ site.domain }}"'
+  when:     site.drush_si_args is not defined
+
+- name:     Define the database URL for {{ site.domain }}
+  set_fact: db_url="mysql://{{ site.db_user | default(site.db_name) }}:{{ site.db_pass | default('') }}@localhost/{{ site.db_name }}"
+
+- name:  Install {{ site.domain }} using drush
+  shell: drush -y si --db-url={{ db_url }} {{ drush_si_args }} chdir="{{ ansible_env.HOME }}/www/{{ site.domain }}"
+
+- name:  Install drupal modules for {{ site.domain }}
+  shell: drush -y pm-enable {{ site.modules | join(' ') }} chdir="{{ ansible_env.HOME }}/www/{{ site.domain }}"
+  when:  site.modules is defined and site.modules[0] is defined
+

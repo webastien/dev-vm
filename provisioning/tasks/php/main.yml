@@ -1,0 +1,39 @@
+- name:     Check if PHP is already configured
+  stat:     path="{{ tasks['php']['config']['phpini'] }}"
+  register: phpConfig
+
+- name:     Configure PHP
+  copy:     src=templates/php.ini dest="{{ tasks['php']['config']['phpini'] }}" owner=root group=root mode=0644
+  when:     phpConfig.stat.exists == False
+  register: updateConfig
+  become:   yes
+
+- name:     Reload php-fpm service
+  service:  name=php7.0-fpm state=reloaded
+  when:     updateConfig.changed
+  become:   yes
+
+- name:     Check if composer is already installed
+  stat:     path="{{ tasks['php']['config']['composer'] }}"
+  register: composer
+
+- name:     Composer installation...
+  include:  composer-install.yml
+  when:     composer.stat.exists == False
+
+- name:     Check if drush is already installed
+  stat:     path="{{ tasks['php']['config']['drushBinary'] }}"
+  register: drush
+
+- name:     Drush installation...
+  include:  drush-install.yml
+  when:     drush.stat.islnk is not defined or drush.stat.islnk == False
+
+- name:     Check if Drupal console is already installed
+  stat:     path="{{ tasks['php']['config']['drupalBinary'] }}"
+  register: drupalConsole
+
+- name:     Drupal console installation...
+  include:  drupalConsole-install.yml
+  when:     drupalConsole.stat.exists == False
+

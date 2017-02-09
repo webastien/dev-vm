@@ -1,0 +1,25 @@
+- name: Create a temp directory to prepare drush
+  file: path=/tmp/drush state=directory
+
+- name:  Install drush in the temp directory
+  shell: composer require "drush/drush" chdir=/tmp/drush
+
+- name:    Move drush in the right place
+  command: mv /tmp/drush "{{ tasks['php']['config']['drushFolder'] }}"
+  become:  yes
+
+- name:   Activate drush binary
+  file:   src="{{ tasks['php']['config']['drushFolder'] }}/vendor/drush/drush/drush" dest="{{ tasks['php']['config']['drushBinary'] }}" state=link
+  become: yes
+
+- name:   Activate drush command's autocompletion
+  file:   src="{{ tasks['php']['config']['drushFolder'] }}/vendor/drush/drush/drush.complete.sh" dest=/etc/bash_completion.d/drush state=link
+  become: yes
+
+- name: Check if Drush language commands has to be installed
+  set_fact: drush_language="{{ (tasks['php']['config']['drushLanguage'] is defined and tasks['php']['config']['drushLanguage']) }}"
+
+- name:  Install Drush language commands for Drupal 7
+  shell: drush dl --default-major=7 drush_language
+  when:  drush_language
+

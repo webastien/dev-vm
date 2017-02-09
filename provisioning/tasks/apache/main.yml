@@ -1,0 +1,30 @@
+- name:    Disable the default vhost
+  command: a2dissite 000-default.conf
+  become:  yes
+
+- name: Install apache modules
+  apache2_module:
+    name:  "{{ module }}"
+    state: present
+  loop_control:
+    loop_var: module
+  with_items: "{{ tasks['apache']['modules'] }}"
+  become:     yes
+
+- name:     Configure fastcgi module
+  template: src=templates/fastcgi.conf dest=/etc/apache2/mods-available/fastcgi.conf
+  register: restartApache
+  become:   yes
+
+- name: Install vhost defined in config.yml
+  include: vhost-install.yml
+  loop_control:
+    loop_var: vhost
+  with_items: "{{ tasks['sites']['vhosts'] }}"
+  when: tasks['sites']['vhosts'][0] is defined
+
+- name:    Restart Apache server
+  service: name=apache2 state=restarted
+  when:    restartApache
+  become:  yes
+

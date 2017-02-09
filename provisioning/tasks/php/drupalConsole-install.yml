@@ -1,0 +1,20 @@
+- name: Check the drupal console folder exists, create it if not
+  file: path="{{ tasks['php']['config']['drupalFolder'] }}" state=directory
+
+- name: Install Drupal console
+  get_url: url='https://drupalconsole.com/installer' dest="{{ tasks['php']['config']['drupalFolder'] }}/drupal" mode=0755
+
+- name: Place Drupal console binary in the right place
+  file: src="{{ tasks['php']['config']['drupalFolder'] }}/drupal" dest="{{ tasks['php']['config']['drupalBinary'] }}" state=link
+  become: true
+
+- name:  Initialize Drupal console
+  shell: "{{ tasks['php']['config']['drupalBinary'] }} init --no-interaction --autocomplete --destination={{ tasks['php']['config']['drupalFolder'] }}"
+
+- name: Activate drupal console's command autocompletion
+  lineinfile:
+    dest:        '{{ ansible_env.HOME }}/.bashrc'
+    line:        'source "$HOME/.console/console.rc" 2>/dev/null'
+    create:      yes
+    insertafter: EOF
+

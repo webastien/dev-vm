@@ -1,0 +1,23 @@
+- name: "Create database {{ site.db_name }}"
+  mysql_db:
+    name:      "{{ site.db_name }}"
+    encoding:  "{{ tasks['mysql']['config']['encoding']  }}"
+    collation: "{{ tasks['mysql']['config']['collation'] }}"
+    state: present
+  when:    site.db_name is defined
+  become:  yes
+
+- name: Ensure the database username is set
+  set_fact: db_user="{{ site.user | default(site.db_name) }}"
+  when: site.db_name is defined
+
+- name: "Create user {{ db_user }} for database {{ site.db_name }}"
+  mysql_user:
+    name:     "{{ db_user }}"
+    host:     'localhost'
+    password: "{{ site.db_pass | default('') }}"
+    priv:     "{{ site.db_name }}.*:ALL"
+    state: present
+  when:    site.db_name is defined
+  become:  yes
+

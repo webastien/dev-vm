@@ -1,0 +1,20 @@
+- name: Download Composer
+  get_url:
+    url:  https://getcomposer.org/installer
+    dest: /tmp/install-composer.php
+    mode: 0755
+
+- name:   Run composer installer
+  shell:  php install-composer.php chdir=/tmp
+
+- name:   Install composer binary in the right place
+  shell:  mv /tmp/composer.phar "{{ tasks['php']['config']['composer'] }}"
+  become: yes
+
+- name:   Install composer autocompletion
+  shell:  composer global require stecman/composer-bash-completion-plugin dev-master
+
+- name:   Activate composer autocompletion
+  file:   src={{ ansible_env.HOME }}/.composer/vendor/stecman/composer-bash-completion-plugin/hooks/bash-completion dest=/etc/bash_completion.d/composer state=link
+  become: yes
+

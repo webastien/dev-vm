@@ -1,0 +1,20 @@
+- name: Define {{ vhost.domain }} root directory
+  set_fact: root={{ ansible_env.HOME }}/www/{{ vhost.domain }}
+
+- name: Create {{ vhost.domain }} root directory
+  file: path={{ root }} state=directory
+
+- name: Check if {{ vhost.domain }} has an existing vhost
+  stat: path='/etc/apache2/sites-available/{{ vhost.domain }}.conf'
+  register: available
+
+- name:     Configure {{ vhost.domain }} vhost
+  template: src=templates/vhost.j2 dest=/etc/apache2/sites-available/{{ vhost.domain }}.conf
+  when:     available.stat.exists == False
+  register: restartApache
+  become:   yes
+
+- name:    Activate {{ vhost.domain }} vhost
+  command: a2ensite {{ vhost.domain }}.conf
+  become:  yes
+

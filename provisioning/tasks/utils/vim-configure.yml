@@ -1,0 +1,21 @@
+- name: Clone VIm configuration from Github in a temp directory
+  git: repo=https://github.com/webastien/vim.git dest=/tmp/vim
+
+- name: Remove existing .vim directory
+  file: path='{{ ansible_env.HOME }}/.vim' state=absent
+
+- name:    Copy the new .vim directory in the right place
+  command: mv /tmp/vim/.vim {{ ansible_env.HOME }}/.vim
+
+- name:    Copy the configured .vimrc in the right place
+  command: mv /tmp/vim/.vimrc {{ ansible_env.HOME }}/.vimrc
+
+- name: Remove temp directory
+  file: path='/tmp/vim' state=absent
+
+- name: Clone Vundle project into VIm bundles' directory
+  git:  repo=https://github.com/VundleVim/Vundle.vim.git dest="{{ ansible_env.HOME }}/.vim/bundle/Vundle.vim"
+
+- name:    Install VIm plugins
+  command: vim -c "PluginInstall" -c "qa!"
+
