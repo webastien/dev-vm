@@ -18,10 +18,13 @@
 - name:     Define the database URL for {{ site.domain }}
   set_fact: db_url="mysql://{{ site.db_user | default(site.db_name) }}:{{ site.db_pass | default('') }}@localhost/{{ site.db_name }}"
 
-- name:  Install {{ site.domain }} using drush
-  shell: drush -y si --db-url={{ db_url }} {{ drush_si_args }} chdir="{{ ansible_env.HOME }}/www/{{ site.domain }}"
+- name: Initialize drush commands list for {{ site.domain }}
+  set_fact:
+    drush_commands:
+      - si --db-url={{ db_url }} {{ drush_si_args }}
+      - pm-enable {{ site.modules | default([]) | join(' ') }}
 
-- name:  Install drupal modules for {{ site.domain }}
-  shell: drush -y pm-enable {{ site.modules | join(' ') }} chdir="{{ ansible_env.HOME }}/www/{{ site.domain }}"
-  when:  site.modules is defined and site.modules[0] is defined
+- name:  Install {{ site.domain }} using drush
+  shell: drush -y {{ item }} chdir="{{ ansible_env.HOME }}/www/{{ site.domain }}"
+  with_items: "{{ drush_commands | union(site.drush_commands | default([])) }}"
 

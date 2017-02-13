@@ -15,7 +15,11 @@ VAGRANT_PLUGINS.each do |plugin|
 end
 
 require 'yaml'
-settings = YAML.load_file('provisioning/vars/config.yml')
+settings = YAML.load_file('provisioning/vars/default-config.yml')
+
+if File.exist?('provisioning/vars/config.yml')
+  settings.merge!(YAML.load_file('provisioning/vars/config.yml'))
+end
 
 Vagrant.configure(VAGRANT_VERSION) do |config|
   config.vm.box      = settings['machine']['box']

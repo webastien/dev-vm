@@ -40,3 +40,9 @@
 - name: Secure {{ ansible_env.HOME }}/www/{{ site.domain }}/sites/default/files
   copy: src=templates/d8-files-htaccess dest="{{ ansible_env.HOME }}/www/{{ site.domain }}/sites/default/files/.htaccess" mode=0444
 
+- name:  Activate Drupal console
+  shell: chdir="{{ ansible_env.HOME }}/www/{{ site.domain }}" {{ item }}
+  with_items:
+    - composer require drupal/console:~1.0 --prefer-dist --optimize-autoloader
+    - composer update drupal/console --with-dependencies
+

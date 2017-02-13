@@ -1,5 +1,5 @@
 - name:           Install repository {{ item.src }}
-  apt_repository: repo='{{ item.src }}' mode=644 state=present
+  apt_repository: repo={{ item.src }} mode=644 state=present
   register:       apt_repositories
   become:         yes
 

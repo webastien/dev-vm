@@ -1,3 +1,4 @@
 .vagrant/
+provisioning/vars/config.yml
 sites/
 

@@ -1,4 +1,4 @@
-- name: "Create database {{ site.db_name }}"
+- name: Create database {{ site.db_name }}
   mysql_db:
     name:      "{{ site.db_name }}"
     encoding:  "{{ tasks['mysql']['config']['encoding']  }}"
@@ -11,7 +11,7 @@
   set_fact: db_user="{{ site.user | default(site.db_name) }}"
   when: site.db_name is defined
 
-- name: "Create user {{ db_user }} for database {{ site.db_name }}"
+- name: Create user {{ db_user }} for database {{ site.db_name }}
   mysql_user:
     name:     "{{ db_user }}"
     host:     'localhost'

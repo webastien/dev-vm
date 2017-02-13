@@ -55,10 +55,11 @@ year), so I've decided to write mine. But now, it seems very stable and usable s
 * As mentioned further: Composer, Drush and Drupal console are installed by default.
 * In the [config.yml](https://github.com/webastien/dev-vm/blob/master/provisioning/vars/config.yml) file you can easily add Drupal 7/8 sites, adminer, phpinfo and it's
   easy to extend the list of "starter sites" you can install with a few lines (Installed drupal 8 sites has their trusted configured)
-  * [My own config](https://github.com/webastien/vim) for my favorite editor: [VIm](http://www.vim.org/)
+* [My own config](https://github.com/webastien/vim) for my favorite editor: [VIm](http://www.vim.org/)
 
 ## How to install?
-Simply clone/copy this repository somewhere and, in this directory, run "**vagrant up**". Now, go find a coffee cause it takes a few minutes. That's it.
+Simply clone/copy this repository somewhere and, in this directory, run "**vagrant up**". Now, go find a coffee cause it takes a few minutes. That's it. You can optionaly
+override default config by copy **provisioning/vars/default-config.yml** to **provisioning/vars/config.yml** and make your changes in it.
 
 ## Know bug
 Don't know why, but the Drupal console autocompletion doesn't work from start (Drupal-VM has the same problem), you have to manualy re-run the command however done with

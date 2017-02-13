@@ -29,9 +29,9 @@ tasks:
   ###############################################################
     packages: [ python-mysqldb, mysql-server, mysql-client ]
     config:
-      mycnf:     '/etc/mysql/conf.d/mysqld.cnf' # Path used to store configuration overrides
-      collation: 'utf8_general_ci'              # Collation used for DB created with  in task sites
-      encoding:  'utf8'                         # Encoding used for DB created with  in task sites
+      mycnf:     /etc/mysql/conf.d/mysqld.cnf # Path used to store configuration overrides
+      collation: utf8_general_ci              # Collation used for DB created with in task sites
+      encoding:  utf8                         # Encoding  used for DB created with in task sites
 
   ###############################################################
   php: # PHP configuration
@@ -39,7 +39,7 @@ tasks:
     repositories:
       # - src: ppa:ondrej/php  <--- Will work with Ubuntu
       # Debian doesn't have ppa support (natively), so use dotdeb instead
-      - src: 'deb http://packages.dotdeb.org jessie all'
+      - src: deb http://packages.dotdeb.org jessie all
         key: https://www.dotdeb.org/dotdeb.gpg
 
     packages:
@@ -60,13 +60,13 @@ tasks:
       - php7.0-xml
 
     config:
-      phpini:        '/etc/php/7.0/fpm/conf.d/99-myPHPconf.ini' # Path used to store conf overrides
-      drupalBinary:  '/usr/local/bin/drupal'                    # Where Drupal console bin will be place
-      composer:      '/usr/local/bin/composer'                  # Same for composer...
+      phpini:        /etc/php/7.0/fpm/conf.d/99-myPHPconf.ini # Path used to store conf overrides
+      drupalBinary:  /usr/local/bin/drupal                    # Where Drupal console bin will be place
+      composer:      /usr/local/bin/composer                  # Same for composer...
       drushLanguage: true  # If true, download Drush language commands
-      drushBinary:   '/usr/local/bin/drush'                     # Same for drush...
-      drushFolder:   '/usr/local/share/drush'                   # Where drush will be installed
-      drupalFolder:  '/home/vagrant/.console'                   # Same for drupal console
+      drushBinary:   /usr/local/bin/drush                     # Same for drush...
+      drushFolder:   /usr/local/share/drush                   # Where drush will be installed
+      drupalFolder:  /home/vagrant/.console                   # Same for drupal console
 
   ###############################################################
   apache: # Apache server configuration
@@ -95,7 +95,7 @@ tasks:
       # The database and the user (full access granted on it) will be created automaticaly.
       - domain:  drupal8.seb
         starter: drupal8
-        modules: [ devel ] # Optional list of Drupal modules
+        modules: [ devel, bootstrap ] # Optional list of Drupal modules / themes
         db_name: drupal8  # "db_name" is required when using starter drupal7/8
         db_user: drupal8  # If omitted, take the "db_name" value
         db_pass: drupal8  # If omitted, the password is null
@@ -104,7 +104,9 @@ tasks:
           -  fr.drupal8.seb
           -  en.drupal8.seb
         # Arguments passed to drush site-install, default to --site-name=<domain> --account-pass=admin
-        drush_si_args: --account-pass=admin --locale=fr --site-name="Drupal8 starter" # --db-url always passed
+        drush_si_args:  --account-pass=admin --locale=fr --site-name="Drupal8 starter" # --db-url always passed
+        drush_commands:  # (optional) List of drush commands executed after site has been installed
+          - config-set system.theme default bootstrap  # Those commands are executed after "drush pm-enable"
 
       # A more simple example of site using a drupal7/8 starter...
       - domain:  drupal7.seb
