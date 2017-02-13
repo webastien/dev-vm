@@ -5,6 +5,7 @@ Vagrant.require_version ">= 1.9"
 
 VAGRANT_VERSION = '2'
 VAGRANT_PLUGINS = [ 'vagrant-hostmanager', 'vagrant-auto_network' ]
+VAGRANTFILE_DIR = File.dirname(File.expand_path(__FILE__))
 
 VAGRANT_PLUGINS.each do |plugin|
   if !Vagrant.has_plugin? plugin
@@ -15,10 +16,10 @@ VAGRANT_PLUGINS.each do |plugin|
 end
 
 require 'yaml'
-settings = YAML.load_file('provisioning/vars/default-config.yml')
+settings = YAML.load_file("#{VAGRANTFILE_DIR}/provisioning/vars/default-config.yml")
 
-if File.exist?('provisioning/vars/config.yml')
-  settings.merge!(YAML.load_file('provisioning/vars/config.yml'))
+if File.exist?("#{VAGRANTFILE_DIR}/provisioning/vars/config.yml")
+  settings.merge!(YAML.load_file("#{VAGRANTFILE_DIR}/provisioning/vars/config.yml"))
 end
 
 Vagrant.configure(VAGRANT_VERSION) do |config|
@@ -49,7 +50,7 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
   end
 
   config.vm.provision 'ansible' do |ansible|
-    ansible.playbook = 'provisioning/playbook.yml'
+    ansible.playbook = "#{VAGRANTFILE_DIR}/provisioning/playbook.yml"
   end
 
   config.hostmanager.manage_host = true
