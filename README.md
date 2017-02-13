@@ -61,17 +61,13 @@ year), so I've decided to write mine. But now, it seems very stable and usable s
 Simply clone/copy this repository somewhere and, in this directory, run "**vagrant up**". Now, go find a coffee cause it takes a few minutes. That's it. You can optionaly
 override default config by copy **provisioning/vars/default-config.yml** to **provisioning/vars/config.yml** and make your changes in it.
 
-## Know bug
-Don't know why, but the Drupal console autocompletion doesn't work from start (Drupal-VM has the same problem), you have to manualy re-run the command however done with
-the playbook:
-
-    drupal init --no-interaction --autocomplete --destination=~/.console
-
-    Then, disconnect from SSH and re-login (or resource your bashrc).
-
 ## Quickfix temporary in place
+* Drupal 8 site name
 There is a (minor) bug with Drupal 8 when installed by drush command and specify the site name: [It's not taken in
 consideration](https://github.com/drush-ops/drush/issues/2462). I've fixed this in
 [drupal8.yml](https://github.com/webastien/dev-vm/blob/master/provisioning/starters/drupal8.yml) with a code not bad but which should not exists if the bug wasn't here.
 I'll suppress this later when fixed in Drush / Drupal8.
+
+* Drupal console autocompletion
+When running **drush init** from ansible, the generated **console.rc** file uses a wrong name for the binary ("sh" instead of "drupal" by default). This is fixed in [drupalConsole-install.yml](https://github.com/webastien/dev-vm/blob/master/provisioning/tasks/php/drupalConsole-install.yml).
 
