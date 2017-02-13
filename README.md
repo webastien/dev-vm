@@ -62,12 +62,14 @@ Simply clone/copy this repository somewhere and, in this directory, run "**vagra
 override default config by copy **provisioning/vars/default-config.yml** to **provisioning/vars/config.yml** and make your changes in it.
 
 ## Quickfix temporary in place
-* Drupal 8 site name
+* **Drupal 8 site name**
+
 There is a (minor) bug with Drupal 8 when installed by drush command and specify the site name: [It's not taken in
 consideration](https://github.com/drush-ops/drush/issues/2462). I've fixed this in
 [drupal8.yml](https://github.com/webastien/dev-vm/blob/master/provisioning/starters/drupal8.yml) with a code not bad but which should not exists if the bug wasn't here.
 I'll suppress this later when fixed in Drush / Drupal8.
 
-* Drupal console autocompletion
+* **Drupal console autocompletion**
+
 When running **drush init** from ansible, the generated **console.rc** file uses a wrong name for the binary ("sh" instead of "drupal" by default). This is fixed in [drupalConsole-install.yml](https://github.com/webastien/dev-vm/blob/master/provisioning/tasks/php/drupalConsole-install.yml).
 
