@@ -1,0 +1,19 @@
+- name:     Define the root directory for {{ domain }}
+  set_fact: siteRootDir="{{ configuration.apache.rootDirectory }}/{{ domain }}"
+
+- name: Check if {{ domain }} is already installed
+  find: path="{{ siteRootDir }}"
+  register: siteFiles
+
+- name: Detect required Drupal version
+  set_fact: version="{{ starter | replace('drupal', '') }}"
+  when:    siteFiles.matched == 0
+
+- name:    Install an instance of Drupal {{ version | int }} into {{ siteRootDir }}
+  include: install-drupal.yml
+  when:    siteFiles.matched == 0 and version | int > 0
+
+- name:    "{{ domain }} installation..."
+  include: "{{ configuration.starters[starter +'.yml'] }}"
+  when:    siteFiles.matched == 0
+

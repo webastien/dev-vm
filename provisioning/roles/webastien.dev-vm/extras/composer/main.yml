@@ -1,0 +1,35 @@
+- name: Check if Composer is already installed
+  stat: path="{{ config.binary }}"
+  register: composer
+
+- name:     Define the path where Composer installer will be downloaded
+  set_fact: dlPath="{{ configuration.vm.dlFolder }}/install-composer.php"
+  when:     not composer.stat.exists
+
+- name: Check if Composer installer has already been downloaded
+  stat: path="{{ dlPath }}"
+  when: not composer.stat.exists
+  register: downloaded
+
+- name:    Download Composer installer
+  get_url: url="{{ config.source }}" dest="{{ dlPath }}" timeout="{{ config.timeout }}"
+  when:    not composer.stat.exists and not downloaded.stat.exists
+
+- name:   Run Composer installer
+  shell:  php install-composer.php chdir="{{ configuration.vm.dlFolder }}"
+  when:   not composer.stat.exists
+
+- name:   Install Composer binary in the right place
+  copy:   src="{{ configuration.vm.dlFolder }}/composer.phar" dest="{{ config.binary }}" mode=0755 remote_src=true
+  when:   not composer.stat.exists
+  become: true
+
+- name:   Install Composer autocompletion
+  shell:  composer global require stecman/composer-bash-completion-plugin dev-master
+  when:   completion and not composer.stat.exists
+
+- name:   Activate Composer autocompletion
+  file:   src={{ ansible_env.HOME }}/.composer/vendor/stecman/composer-bash-completion-plugin/hooks/bash-completion dest=/etc/bash_completion.d/composer state=link
+  when:   completion and not composer.stat.exists
+  become: true
+

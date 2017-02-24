@@ -1,7 +1,0 @@
-- name:    Site starters installation...
-  include: starter-install.yml
-  loop_control:
-    loop_var: site
-  with_items: "{{ tasks['sites']['vhosts'] }}"
-  when: tasks['sites']['vhosts'][0] is defined
-

@@ -1,0 +1,65 @@
+# Box name, as seen on https://atlas.hashicorp.com/boxes/search
+box: garbetjie/debian8
+# Virtual machine name you can see in Virtualbox
+hostname: dev-vm
+# Set the machine name (visible in vagrant status)
+machineName: dev-vm
+# IP address
+private_IP: 0.0.0.0
+# RAM affected to the VM (in mega-octet)
+memory: 2048
+# Number of dedicated core (be sure don't use all of yours!)
+cpus: 2
+# Clone a base box instead of build a new one?
+clone: true
+# Folders to synchronize
+syncFolders:
+  # Synchronize the folder where our sites will be installed
+  - local:   sites
+    remote:  /home/vagrant/www
+    options: { type: nfs, create: true, id: www }
+  # Synchronize the folder where our downloads will be stored
+  - local:   downloads
+    remote:  /home/vagrant/downloads
+    options: { type: nfs, create: true, id: downloads }
+  # Disable the default vagrant synchronization on /vagrant for the Vagrantfile's folder
+  - local:   .
+    remote:  /vagrant
+    options: { disabled: true }
+# Directory where downloads will be store
+dlFolder: /home/vagrant/downloads
+# Virtualbox specific modifiers... (don't forget: in YAML "on" without string enclosure is consider as boolean TRUE)
+virtualBoxModifiers:
+  natdnshostresolver1: 'on'
+  natdnsproxy1:        'on'
+  ioapic:              'on'
+# Vagrant cachier plugins settings... (ignored if the plugin is not installed)
+cachier:
+  # /!\ Do not name a key "is_activated" here, because it will be overriden in the Vagrantfile
+  syncFolderOpts: { type: nfs, mount_options: ['rw', 'vers=3', 'tcp', 'nolock'] }
+  # Vagrant Cachier buckets, @see http://fgrehm.viewdocs.io/vagrant-cachier/
+  # key are bucket type, value are options (an empty hash for enabledBuckets will turn cachier auto-detect to true)
+  enabledBuckets: # /!\ Read the comment below the generic bucket definition
+    apt: {} # (apt bucket has no options)
+    generic: {
+      drush:    { cache_dir: /home/vagrant/.drush/cache },
+      composer: { cache_dir: /home/vagrant/.composer/cache }
+    }
+  ##################################################################################
+  # /!\ Beware: /!\
+  # ---------------
+  # - Can't use bucket composer properly
+  #     @see https://github.com/fgrehm/vagrant-cachier/issues/118
+  #
+  # - Generic bucket can't work (at least with NFS) if in a sync folder
+  #     @see https://github.com/fgrehm/vagrant-cachier/issues/138
+  #
+  # - Generic bucket generate a symlink and create parent directory if needed...
+  #   it acts as root, so you could have to adjust the directory's owner.
+  #   Populate the following "fixOwnership" with thoses directories.
+  #
+  ##################################################################################
+  fixOwnership: # /!\ Read the comment before
+    - /home/vagrant/.drush
+    - /home/vagrant/.composer
+

@@ -1,0 +1,12 @@
+# Minimal version of Vagrant
+minimal_version: 1.9
+# Configuration version used
+config_version: 2
+# List all plugins required (auto-installed if not present)
+required_plugins:
+  - vagrant-hostmanager
+  - vagrant-auto_network
+# List all plugins suggested (ask for auto-installed if not present)
+suggested_plugins:
+  - vagrant-cachier
+

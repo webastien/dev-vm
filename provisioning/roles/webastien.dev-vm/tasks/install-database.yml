@@ -1,0 +1,21 @@
+- name: Create database {{ db_name }}
+  mysql_db:
+    name:      "{{ db_name }}"
+    encoding:  "{{ configuration.mysql.encoding  }}"
+    collation: "{{ configuration.mysql.collation }}"
+    state:     present
+  when: needDB
+
+- name:     Ensure the database username is set for {{ db_name }}
+  set_fact: db_user="{{ item.value.db_user | default(db_name) }}"
+  when:     needDB
+
+- name: Create user {{ db_user }} for database {{ db_name }}
+  mysql_user:
+    name:     "{{ db_user }}"
+    host:     localhost
+    password: "{{ item.value.db_pass | default('') }}"
+    priv:     "{{ db_name }}.*:ALL"
+    state:    present
+  when: needDB
+

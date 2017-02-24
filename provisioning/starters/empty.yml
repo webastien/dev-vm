@@ -1,2 +1,0 @@
-- name:  Install {{ site.domain }} using 'empty' starter
-  shell: printf '<?php phpinfo();' >> index.php chdir={{ ansible_env.HOME }}/www/{{ site.domain }}

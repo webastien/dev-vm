@@ -1,0 +1,34 @@
+- name:     Define the path where Drupal will be downloaded
+  set_fact: dlPath="{{ configuration.vm.dlFolder }}"
+
+- name:  Download Drupal {{ version }} sources
+  shell: drush dl --default-major={{ version }} --destination={{ dlPath }} --drupal-project-rename=drupal{{ version }} creates={{ dlPath }}/drupal{{ version }}
+
+- name: Remove previous {{ domain }} root directory
+  file: path='{{ siteRootDir }}' state=absent
+
+# NOTE: Can't use Ansible module "copy" with "remote=true" because it doesn't support recursive
+- name:  Copy Drupal {{ version }} sources to {{ domain }} root directory
+  shell: cp -r {{ dlPath }}/drupal{{ version }} {{ siteRootDir }}
+
+- name:     Define arguments for drush site-install
+  set_fact: drush_si_args="{{ site.drush_si_args }}"
+  when:     site.drush_si_args is defined
+
+- name:     Define default arguments for drush site-install
+  set_fact: drush_si_args='--account-pass=admin  --site-name="{{ domain }}"'
+  when:     site.drush_si_args is not defined
+
+- name:     Define the database URL for {{ domain }}
+  set_fact: db_url="mysql://{{ site.db_user | default(db_name) }}:{{ site.db_pass | default('') }}@localhost/{{ db_name }}"
+
+- name: Initialize drush commands list for {{ domain }}
+  set_fact:
+    drush_commands:
+      - si --db-url={{ db_url }} {{ drush_si_args }}
+      - pm-enable {{ site.modules | default([]) | join(' ') }}
+
+- name:  Install {{ domain }} using drush
+  shell: drush -y {{ item }} chdir="{{ siteRootDir }}"
+  with_items: "{{ drush_commands | union(site.drush_commands | default([])) }}"
+

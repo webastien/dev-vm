@@ -1,0 +1,15 @@
+# Disable (or not) the default Apache Vhost
+defaultVhost: false
+# Directy where sites will be installed
+rootDirectory: /home/vagrant/www
+#  List of apache modules to enable
+modules:
+  - rewrite
+  - vhost_alias
+  - expires
+  - actions
+
+packages:
+  - apache2
+  - libapache2-mod-fastcgi
+

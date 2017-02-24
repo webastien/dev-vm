@@ -1,0 +1,33 @@
+- name:     Check if the default vhost is enabled
+  stat:     path=/etc/apache2/sites-enabled/000-default.conf
+  when:     not configuration.apache.defaultVhost
+  register: defaultVhost
+
+- name:    Disable the default vhost
+  command: a2dissite 000-default.conf
+  when:    not configuration.apache.defaultVhost and defaultVhost.stat.exists
+
+- name:           Install apache modules
+  apache2_module: name={{ item }} state=present
+  with_items:     "{{ configuration.apache.modules }}"
+
+- name:     Configure fastcgi module
+  template: src={{ configuration.templates['fastcgi.conf'] }} dest=/etc/apache2/mods-available/fastcgi.conf
+  register: restartApache
+
+- name:         Vhosts installation...
+  include:      install-vhost.yml aliases={{ configuration.vhosts[domain].aliases | default(false) }}
+  with_items:   "{{ configuration.vhosts }}"
+  loop_control: { loop_var: domain }
+  when:         configuration.vhosts | length > 0
+
+- name:    Restart Apache server
+  service: name=apache2 state=restarted
+  when:    restartApache.changed
+
+- name:    Reload Apache configuration
+  service: name=apache2 state=reloaded
+  when:    not restartApache.changed and
+           ( (configuration.vhosts | length > 0 is defined and reloadApache.changed) or
+             (not configuration.apache.defaultVhost and defaultVhost.stat.exists) )
+

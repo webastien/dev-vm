@@ -1,8 +1,0 @@
-- name: Check if {{ site.domain }} is already installed
-  find: path='{{ ansible_env.HOME }}/www/{{ site.domain }}'
-  register: containsth
-
-- name:    "{{ site.domain }} starter installation"
-  include: starters/{{ site.starter | default('empty') }}.yml
-  when: containsth.matched == 0
-

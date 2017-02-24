@@ -1,0 +1,21 @@
+- name:     Look for a .vimrc file
+  stat:     path="{{ ansible_env.HOME }}/.vimrc"
+  register: customVimRC
+
+- name:     Look for a .vim directory
+  stat:     path="{{ ansible_env.HOME }}/.vimrc"
+  register: customVimDir
+
+- name:     Check if VIm has a custom configuration already installed
+  set_fact: customVim={{ customVimRC.stat.exists or (customVimDir.stat.exists and customVimDir.stat.isdir) }}
+
+- name:         Install VIm configuration...
+  include:      install-vim-repository.yml
+  with_items:   "{{ config.repositories }}"
+  loop_control: { loop_var: repo }
+  when:         not customVim
+
+- name:    Execute VIM commands...
+  include: execute-vim-commands.yml
+  when:    not customVim
+

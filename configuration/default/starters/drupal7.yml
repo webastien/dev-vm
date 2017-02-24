@@ -1,0 +1,18 @@
+- name:     Check the site language defined in config
+  set_fact: site_lang="{{ drush_si_args | regex_search('--locale=(.*?)((\s+--[a-z\-]+=.*)|$)', '\\1')  }}"
+
+- name:     Define the site language
+  set_fact: site_lang="{{ site_lang[0] if site_lang[0] is defined else '' }}"
+
+- name:  Install Localization update for {{ domain }}
+  shell: drush -y pm-enable l10n_update chdir="{{ siteRootDir }}"
+  when:  site_lang != '' and configuration.extras.config.drush.language
+
+- name:  Activate language {{ site_lang }} for {{ domain }}
+  shell: drush -y langadd {{ site_lang }} && drush -y langdef {{ site_lang }} chdir="{{ siteRootDir }}"
+  when:  site_lang != '' and configuration.extras.config.drush.language
+
+- name:  Update {{ site_lang }} translations for {{ domain }}
+  shell: drush -y l10n-update-refresh && drush -y l10n-update chdir="{{ siteRootDir }}"
+  when:  site_lang != '' and configuration.extras.config.drush.language
+

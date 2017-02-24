@@ -1,0 +1,7 @@
+# Default starter (when no starter given falls back to this one)
+fallback: empty
+# List of starters requiring no database
+noDB:
+  - empty
+  - adminer
+

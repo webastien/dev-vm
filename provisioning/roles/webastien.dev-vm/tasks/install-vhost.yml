@@ -1,0 +1,19 @@
+- name:     Define {{ domain }} root directory
+  set_fact: siteRootDir={{ configuration.apache.rootDirectory }}/{{ domain }}
+
+- name: Create {{ domain }} root directory
+  file: path={{ siteRootDir }} state=directory
+
+- name:     Check if {{ domain }} already has a vhost
+  stat:     path=/etc/apache2/sites-available/{{ domain }}.conf
+  register: available
+
+- name:     Configure {{ domain }} vhost
+  template: src={{ configuration.templates['vhost.j2'] }} dest=/etc/apache2/sites-available/{{ domain }}.conf
+  when:     not available.stat.exists
+  register: reloadApache
+
+- name:    Activate {{ domain }} vhost
+  command: a2ensite {{ domain }}.conf
+  when:    not available.stat.exists
+

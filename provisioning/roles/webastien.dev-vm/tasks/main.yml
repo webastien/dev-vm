@@ -1,0 +1,45 @@
+- name: Check if Message of the day is already disabled
+  stat: path="{{ ansible_env.HOME }}/.hushlogin"
+  when: not configuration.utils.messageOfTheDay
+  register: motd
+
+- name: Remove message of the day
+  file: path="{{ ansible_env.HOME }}/.hushlogin" state=touch
+  when: not configuration.utils.messageOfTheDay and not motd.stat.exists
+
+- name:    Repositories and packages installation...
+  include: install-packages.yml
+  become:  true
+
+- name:    MySql configuration...
+  include: configure-mysql.yml
+  become:  true
+
+- name:    PHP configuration...
+  include: configure-php.yml
+  become:  true
+
+- name:    Apache configuration...
+  include: configure-apache.yml
+  become:  true
+
+# Bash-completion is required for Composer, Drush and DrupalConsole completion...
+- name:         Check if bash-completion package is installed
+  shell:        dpkg-query -s bash-completion
+  register:     bashCompletion
+  failed_when:  bashCompletion.rc > 1
+  changed_when: false
+
+- name:         Install extras...
+  include:      ../extras/{{ extra }}/main.yml config={{ configuration.extras.config[extra] | default({}) }} completion={{ bashCompletion.stderr == '' }}
+  with_items:   "{{ configuration.extras.enabled }}"
+  loop_control: { loop_var: extra }
+
+- name:    Websites installation...
+  include: install-website.yml domain={{ siteDict.key }} site={{ siteDict.value }} \
+    starter={{ siteDict.value.starter | default(configuration.startersConfig.fallback) }} \
+    db_name={{ siteDict.value.db_name | default(siteDict.key) | regex_replace('(.*)\.(.*)', '\1') | replace('.', '_') }}
+  with_dict:   "{{ configuration.vhosts }}"
+  loop_control: { loop_var: siteDict }
+  when: configuration.vhosts | length > 0
+

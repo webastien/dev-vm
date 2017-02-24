@@ -1,0 +1,34 @@
+- name: Enable non free packages
+  replace:
+    dest:    /etc/apt/sources.list
+    backup:  yes
+    regexp:  '^(^(?:deb|deb-src)\s+.*main$)\s*$'
+    replace: '\1 non-free'
+  when:     configuration.utils.nonFreePackages
+  register: non_free_packages
+
+- name: Initialize lists of required repositories and packages
+  set_fact:
+    installRepo:  { changed: false }
+    repositories: []
+    packages:     []
+
+- name: Populate the lists...
+  set_fact:
+    packages:     "{{ packages     | union(configuration[item].packages     | default([])) }}"
+    repositories: "{{ repositories | union(configuration[item].repositories | default([])) }}"
+  with_items: "{{ configuration | list }}"
+
+- name:       Repositories installation...
+  include:    install-repository.yml
+  with_items: "{{ repositories }}"
+  when:       repositories[0] is defined
+
+- name:       Refresh APT cache and upgrade current installed packages
+  apt:        update_cache=yes upgrade=yes
+  when:       non_free_packages.changed or installRepo.changed
+
+- name:       Install new packages
+  apt:        name={{ item }}
+  with_items: "{{ packages }}"
+

@@ -1,0 +1,28 @@
+# PHP service name
+phpService: php7.0-fpm
+# Path used to store conf overrides
+phpini: /etc/php/7.0/fpm/conf.d/99-myPHPconf.ini
+
+repositories:
+  # - src: ppa:ondrej/php  <--- Will work with Ubuntu
+  # Debian doesn't have ppa support (natively), so use dotdeb instead
+  - src: deb http://packages.dotdeb.org jessie all
+    key: https://www.dotdeb.org/dotdeb.gpg
+
+packages:
+  - php7.0-apcu
+  - php7.0-cgi
+  - php7.0-cli
+  - php7.0-common
+  - php7.0-curl
+  - php7.0-fpm
+  - php7.0-gd
+  - php7.0-imap
+  - php7.0-intl
+  - php7.0-json
+  - php7.0-mbstring
+  - php7.0-mcrypt
+  - php7.0-mysql
+  - php7.0-opcache
+  - php7.0-xml
+

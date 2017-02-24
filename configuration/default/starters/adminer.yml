@@ -1,0 +1,11 @@
+- name: Check if adminer has already been downloaded
+  stat: path="{{ configuration.vm.dlFolder }}/adminer.php"
+  register: downloaded
+
+- name:    Download adminer
+  get_url: url=http://www.adminer.org/latest.php dest="{{ configuration.vm.dlFolder }}/adminer.php"
+  when:    not downloaded.stat.exists
+
+- name: Copy adminer to {{ domain }} root directory
+  copy: src="{{ configuration.vm.dlFolder }}/adminer.php" dest="{{ siteRootDir }}/index.php" remote_src=true
+

@@ -1,4 +1,5 @@
 .vagrant/
-provisioning/vars/config.yml
+configuration/yours/
+downloads/
 sites/
 

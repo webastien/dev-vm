@@ -1,0 +1,47 @@
+- name: Check if Drupal console is already installed
+  stat: path="{{ config.binary }}"
+  register: drupal
+
+- name:     Define the path where Drupal console will be downloaded
+  set_fact: dlPath="{{ configuration.vm.dlFolder }}/drupalConsole"
+  when:     not drupal.stat.exists
+
+- name: Check if Drupal console has already been downloaded
+  stat: path="{{ dlPath }}"
+  when: not drupal.stat.exists
+  register: downloaded
+
+- name:    Download Drupal console binary
+  get_url: url="{{ config.source }}" dest="{{ dlPath }}" timeout="{{ config.timeout }}"
+  when:    not drupal.stat.exists and not downloaded.stat.exists
+
+- name:   Copy Drupal console binary in the right place
+  copy:   src="{{ dlPath }}" dest="{{ config.binary }}" mode=0755 remote_src=true
+  when:   not drupal.stat.exists
+  become: true
+
+- name: Check if Drupal console has already been initialized
+  stat: path="{{ config.folder }}/config.yml"
+  register: drupalInit
+
+- name:  Initialize Drupal console
+  shell: "{{ config.binary }} init --no-interaction --autocomplete --destination={{ config.folder }}/"
+  when:  not drupalInit.stat.exists
+
+# QUICKFIX: Should not be done, but seems there is a bug when generate the console.rc file via Vagrant / Ansible
+- name: Fix binary name in console.rc
+  lineinfile:
+    dest:   "{{ config.folder }}/console.rc"
+    regexp: ^if HOOK=\$\(sh _completion -g -p sh\); then
+    line:   if HOOK=$({{ config.binary | basename }} _completion -g -p {{ config.binary | basename }}); then
+  when: completion and not drupalInit.stat.exists
+# QUICKFIX / end
+
+- name: Activate Drupal console's command autocompletion
+  lineinfile:
+    dest:        "{{ ansible_env.HOME }}/.bashrc"
+    line:        source "{{ config.folder }}/console.rc" 2>/dev/null
+    create:      yes
+    insertafter: EOF
+  when: completion
+

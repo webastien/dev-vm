@@ -1,0 +1,33 @@
+enabled:
+  - vimConfig
+  - composer
+  - drush
+  - drupalConsole
+
+config:
+  composer:
+    source:  https://getcomposer.org/installer # URL to get composer
+    timeout: 20 # Works fine with default value (10) but just in case
+    binary:  /usr/local/bin/composer # Path to composer binary
+
+  vimConfig:
+    # List of git repositories to clone, each with a mapping: { <path-in-repo>: <path-in-vm-relative-to-home> }
+    repositories:
+      - src: https://github.com/webastien/vim.git
+        map: { .vimrc: .vimrc, .vim: .vim }
+      - src: https://github.com/VundleVim/Vundle.vim.git
+        map: { .: .vim/bundle/Vundle.vim }
+    # Commands executed directly in VIm
+    commands: [ PluginInstall ]
+
+  drush:
+    binary:   /usr/local/bin/drush   # Path to Drush binary
+    folder:   /usr/local/share/drush # Folder to install Drush
+    language: true                   # Install drush_language (D7)
+
+  drupalConsole:
+    source:  https://drupalconsole.com/installer # URL to get Drupal console installer
+    timeout: 30 # Giving an higher value than default (10) because the server is sometimes slow...
+    binary:  /usr/local/bin/drupal  # Path to Drupal console binary
+    folder:  /home/vagrant/.console # Folder to install Drupal console
+

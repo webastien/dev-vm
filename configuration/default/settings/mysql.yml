@@ -1,0 +1,12 @@
+# Path used to store configuration overrides
+mycnf: /etc/mysql/conf.d/mysqld.cnf
+# Collation used for DB created with in task sites
+collation: utf8_general_ci
+# Encoding  used for DB created with in task sites
+encoding: utf8
+
+packages:
+  - python-mysqldb
+  - mysql-server
+  - mysql-client
+

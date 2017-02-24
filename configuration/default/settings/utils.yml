@@ -1,0 +1,13 @@
+# Enable non-free packages (Debian) in sources.list
+nonFreePackages: true
+# Leave or not the MOTD
+messageOfTheDay: false
+
+packages:
+  - ctags
+  - git
+  - vim
+  - curl
+  - unzip
+  - bash-completion
+

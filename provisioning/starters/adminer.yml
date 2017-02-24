@@ -1,5 +1,0 @@
-- name:  Install adminer to {{ site.domain }}
-  get_url:
-    url:  http://www.adminer.org/latest.php
-    dest: "{{ ansible_env.HOME }}/www/{{ site.domain }}/index.php"
-

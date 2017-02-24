@@ -1,0 +1,20 @@
+- name:     Check if MySQL is already configured
+  stat:     path="{{ configuration.mysql.mycnf }}"
+  register: mysqlConfig
+
+- name:     Configure MySQL
+  copy:     src={{ configuration.templates['my.cnf'] }} dest={{ configuration.mysql.mycnf }} owner=root group=root mode=0644
+  when:     not mysqlConfig.stat.exists
+  register: mysql
+
+- name:    Restart MySQL
+  service: name=mysql state=restarted
+  when:    mysql.changed
+
+- name:      Create users and databases
+  include:   install-database.yml \
+     needDB={{ item.value.starter | default(configuration.startersConfig.fallback) not in configuration.startersConfig.noDB }} \
+    db_name={{ item.value.db_name | default(item.key) | regex_replace('(.*)\.(.*)', '\1') | replace('.', '_') }}
+  with_dict: "{{ configuration.vhosts }}"
+  when:      configuration.vhosts | length > 0
+

@@ -1,25 +1,19 @@
 - hosts: all
-  # Get the default config
-  vars_files:
-    - vars/default-config.yml
+
   pre_tasks:
-    # Verify Ansible can run this playbook
     - name: Check ansible version
       assert:
         that: ansible_version.full | version_compare('2.2', '>=')
         msg:  You need to update Ansible!
-    # Merge user defined config if exists
-    - name: Include user defined configuration
-      include_vars:  "{{ item }}"
-      with_fileglob: [ vars/config.yml ]
-  # Include tasks to play when provisioning
-  tasks:
-    - name:    Include our tasks to the playbook
-      include: tasks/{{ task }}/main.yml
-      # Settings a different item name here because {{ item }} can be used in included files
-      loop_control:
-        loop_var: task
-      # Beware: the order of this list is important...
-      # For example, sites will depend on php, mysql, apache, ...
-      with_items: [ utils, mysql, php, apache, sites ]
+    # When cachier is enabled, you can define a list of dirs in vm.yml which will be re-assigned to vagrant user.
+    # Useful for generic buckets because they can create folders as root. @see vm.yml for a better explanation.
+    - name:       Fix ownerships of Vagrant cachier generic buckets...
+      file:       path="{{ item }}" owner="{{ ansible_env.USER }}" group="{{ ansible_env.USER }}"
+      when:       configuration.vm.cachier.is_activated and configuration.vm.cachier.fixOwnership[0]
+      with_items: "{{ configuration.vm.cachier.fixOwnership }}"
+      become:     true
+
+  roles:
+    # Attach the main role to install the VM
+    - webastien.dev-vm
 
