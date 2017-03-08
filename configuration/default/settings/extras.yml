@@ -10,9 +10,11 @@ config:
     # List of files in templates folder to copy in home (a dot is added at the beginning of each filename)
     files:
       - hushlogin  # For example, this one will be copied to ~/.hushlogin (empty file to disable MOTD)
-      - bash_profile
       - gitconfig
       - gitignore_global
+    # List of additions to put in dot files, keyed by filename (without dot)
+    additions:
+      bashrc: export PS1="\[$(tput bold)\]\[\033[48;5;22m\] \h \[$(tput sgr0)\]\[\033[38;5;251m\]\[\033[48;5;237m\] \w \[$(tput sgr0)\] "
 
   vimConfig:
     # List of git repositories to clone, each with a mapping: { <path-in-repo>: <path-in-vm-relative-to-home> }

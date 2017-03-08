@@ -2,3 +2,7 @@
   template:   src={{ configuration.templates[item] }} dest={{ ansible_env.HOME }}/.{{ item }} force=no
   with_items: "{{ config.files }}"
 
+- name:       Put custom additions to dot files
+  lineinfile: dest={{ ansible_env.HOME }}/.{{ item.key }} line={{ item.value }} create=yes
+  with_dict:  "{{ config.additions }}"
+
