@@ -1,12 +1,3 @@
-- name: Check if Message of the day is already disabled
-  stat: path="{{ ansible_env.HOME }}/.hushlogin"
-  when: not configuration.utils.messageOfTheDay
-  register: motd
-
-- name: Remove message of the day
-  file: path="{{ ansible_env.HOME }}/.hushlogin" state=touch
-  when: not configuration.utils.messageOfTheDay and not motd.stat.exists
-
 - name:    Repositories and packages installation...
   include: install-packages.yml
   become:  true

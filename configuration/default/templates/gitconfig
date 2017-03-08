@@ -1,0 +1,12 @@
+[core]
+	editor = /usr/bin/vim
+	excludesfile = {{ ansible_env.HOME }}/.gitignore_global
+[diff]
+	tool = vimdiff
+[alias]
+	d = difftool
+  s = status
+[difftool]
+	prompt = false
+[push]
+	default = simple

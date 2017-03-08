@@ -53,6 +53,8 @@ Vagrant.configure(configuration['vagrant']['config_version']) do |config|
   config.vm.define configuration['vm']['machineName']
   # Allow SSH connection to the VM
   config.ssh.forward_agent = true
+  # Change the SSH port to prevent collisions
+  config.ssh.port = configuration['vm']['sshPort']
   # Configure the synchronized folders
   configuration['vm']['syncFolders'].each do |folder|
     config.vm.synced_folder folder['local'], folder['remote'], folder['options'].symbolize_keys
@@ -72,6 +74,7 @@ Vagrant.configure(configuration['vagrant']['config_version']) do |config|
     end
   end
   # Networking configuration...
+  config.vm.network :forwarded_port,  id: 'ssh', guest: 22, host: configuration['vm']['sshPort']
   config.vm.network :private_network, ip: configuration['vm']['private_IP'], auto_network: Vagrant.has_plugin?('vagrant-auto_network')
   # Vagrant hostmanager plugin settings...
   if Vagrant.has_plugin?('vagrant-hostmanager')

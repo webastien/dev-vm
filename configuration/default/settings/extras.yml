@@ -1,14 +1,18 @@
 enabled:
+  - dotFiles
   - vimConfig
   - composer
   - drush
   - drupalConsole
 
 config:
-  composer:
-    source:  https://getcomposer.org/installer # URL to get composer
-    timeout: 20 # Works fine with default value (10) but just in case
-    binary:  /usr/local/bin/composer # Path to composer binary
+  dotFiles:
+    # List of files in templates folder to copy in home (a dot is added at the beginning of each filename)
+    files:
+      - hushlogin  # For example, this one will be copied to ~/.hushlogin (empty file to disable MOTD)
+      - bash_profile
+      - gitconfig
+      - gitignore_global
 
   vimConfig:
     # List of git repositories to clone, each with a mapping: { <path-in-repo>: <path-in-vm-relative-to-home> }
@@ -18,7 +22,12 @@ config:
       - src: https://github.com/VundleVim/Vundle.vim.git
         map: { .: .vim/bundle/Vundle.vim }
     # Commands executed directly in VIm
-    commands: [ PluginInstall ]
+    commands: [ PluginInstall, PluginUpdate ]
+
+  composer:
+    source:  https://getcomposer.org/installer # URL to get composer
+    timeout: 20 # Works fine with default value (10) but just in case
+    binary:  /usr/local/bin/composer # Path to composer binary
 
   drush:
     binary:   /usr/local/bin/drush   # Path to Drush binary

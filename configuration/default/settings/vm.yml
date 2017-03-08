@@ -4,6 +4,8 @@ box: garbetjie/debian8
 hostname: dev-vm
 # Set the machine name (visible in vagrant status)
 machineName: dev-vm
+# Set the port to communicate by SSH
+sshPort: 22042
 # IP address
 private_IP: 0.0.0.0
 # RAM affected to the VM (in mega-octet)

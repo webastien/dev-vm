@@ -15,7 +15,9 @@
   loop_control: { loop_var: repo }
   when:         not customVim
 
-- name:    Execute VIM commands...
-  include: execute-vim-commands.yml
-  when:    not customVim
+- name:         Execute VIM commands...
+  shell:        vim -E -s -c "source {{ ansible_env.HOME }}/.vimrc" -c "{{ config.commands | join('" -c "') }}" -c "qa!"
+  when:         not customVim
+  register:     vimCommand
+  failed_when:  vimCommand.stderr != ''
 

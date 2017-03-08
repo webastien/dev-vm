@@ -1,0 +1,4 @@
+- name:       Copy dot files into the home directory
+  template:   src={{ configuration.templates[item] }} dest={{ ansible_env.HOME }}/.{{ item }} force=no
+  with_items: "{{ config.files }}"
+
