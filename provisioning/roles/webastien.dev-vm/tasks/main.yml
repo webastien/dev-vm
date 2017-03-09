@@ -30,7 +30,7 @@
   include: install-website.yml domain={{ siteDict.key }} site={{ siteDict.value }} \
     starter={{ siteDict.value.starter | default(configuration.startersConfig.fallback) }} \
     db_name={{ siteDict.value.db_name | default(siteDict.key) | regex_replace('(.*)\.(.*)', '\1') | replace('.', '_') }}
-  with_dict:   "{{ configuration.vhosts }}"
+  with_dict:   "{{ configuration.vhosts.vhosts }}"
   loop_control: { loop_var: siteDict }
-  when: configuration.vhosts | length > 0
+  when: configuration.vhosts.vhosts | length > 0
 

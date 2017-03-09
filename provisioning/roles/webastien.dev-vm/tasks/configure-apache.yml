@@ -16,10 +16,10 @@
   register: restartApache
 
 - name:         Vhosts installation...
-  include:      install-vhost.yml aliases={{ configuration.vhosts[domain].aliases | default(false) }}
-  with_items:   "{{ configuration.vhosts }}"
+  include:      install-vhost.yml aliases={{ configuration.vhosts.vhosts[domain].aliases | default(false) }}
+  with_items:   "{{ configuration.vhosts.vhosts }}"
   loop_control: { loop_var: domain }
-  when:         configuration.vhosts | length > 0
+  when:         configuration.vhosts.vhosts | length > 0
 
 - name:    Restart Apache server
   service: name=apache2 state=restarted
@@ -28,6 +28,6 @@
 - name:    Reload Apache configuration
   service: name=apache2 state=reloaded
   when:    not restartApache.changed and
-           ( (configuration.vhosts | length > 0 is defined and reloadApache.changed) or
+           ( (configuration.vhosts.vhosts | length > 0 is defined and reloadApache.changed) or
              (not configuration.apache.defaultVhost and defaultVhost.stat.exists) )
 

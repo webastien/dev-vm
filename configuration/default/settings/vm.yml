@@ -12,8 +12,8 @@ private_IP: 0.0.0.0
 memory: 2048
 # Number of dedicated core (be sure don't use all of yours!)
 cpus: 2
-# Clone a base box instead of build a new one?
-clone: true
+# Link the base box instead of build an independant VM
+clone: false
 # Folders to synchronize
 syncFolders:
   # Synchronize the folder where our sites will be installed

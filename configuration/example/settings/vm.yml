@@ -1,0 +1,19 @@
+hostname: example-vm
+machineName: example
+
+sshPort: 22021
+memory:  1024
+cpus:    1
+
+syncFolders:
+  - local:   www
+    remote:  /home/vagrant/www
+    options: { type: nfs, create: true, id: www }
+
+dlFolder: /tmp
+
+cachier:
+  syncFolderOpts: { type: nfs, mount_options: ['rw', 'vers=3', 'tcp', 'nolock'] }
+  enabledBuckets: { apt: {} }
+  fixOwnership:   []
+

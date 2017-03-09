@@ -1,0 +1,16 @@
+- hosts: all
+
+  pre_tasks:
+    - name: Check ansible version
+      assert:
+        that: ansible_version.full | version_compare('2.2', '>=')
+        msg:  You need to update Ansible!
+
+  roles:
+    - webastien.dev-vm
+
+  tasks:
+    - name:   Change the message of the day...
+      copy:   src={{ configuration.templates['motd'] }} dest=/etc/motd
+      become: true
+

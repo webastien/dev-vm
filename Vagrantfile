@@ -21,12 +21,15 @@ end
 # Inject default files path, eventually overriden by user ones...
 ['templates', 'starters'].each do |section|
   configuration[section] = {} # Init the section in configuration variable
-  # Check all files for this section
+  # Attach user defined files to the section configuration
+  if test ?d, "#{current_dir}/configuration/yours/#{section}"
+    Dir["#{current_dir}/configuration/yours/#{section}/*"].each do |file|
+      fileName = File.basename(file); configuration[section][fileName] = "#{current_dir}/configuration/yours/#{section}/#{fileName}"
+    end
+  end
+  # Attach default files to the section configuration
   Dir["#{current_dir}/configuration/default/#{section}/*"].each do |file|
-    fileName = File.basename(file)
-    userFile = "#{current_dir}/configuration/yours/#{section}/#{fileName}"
-    # Add the path in the config, default if not overriden
-    configuration[section][fileName] = File.exist?(userFile)? userFile: file
+    fileName = File.basename(file); if !configuration[section].key?(fileName); configuration[section][fileName] = file; end
   end
 end
 # Fix the minimal version of vagrant to execute this script
@@ -82,7 +85,7 @@ Vagrant.configure(configuration['vagrant']['config_version']) do |config|
     config.hostmanager.enabled     = true
     config.hostmanager.aliases     = []
     # Build the list of domains / aliases we need on the VM
-    configuration['vhosts'].each do |domain,vhost|
+    configuration['vhosts']['vhosts'].each do |domain,vhost|
       config.hostmanager.aliases.push(domain)
       config.hostmanager.aliases.concat(vhost['aliases']) if vhost['aliases']
     end
@@ -111,7 +114,13 @@ Vagrant.configure(configuration['vagrant']['config_version']) do |config|
   end
   # Configure ansible...
   config.vm.provision 'ansible' do |ansible|
-    ansible.playbook   = "#{current_dir}/provisioning/playbook.yml"
+    # Tell Ansible to use the appropriate playbook
+    if File.exist?("#{current_dir}/configuration/yours/playbook.yml")
+      ansible.playbook ="#{current_dir}/configuration/yours/playbook.yml"
+    else
+      ansible.playbook = "#{current_dir}/provisioning/playbook.yml"
+    end
+    # Send the generated configuration to Ansible
     ansible.extra_vars = { configuration: configuration }
   end
 end

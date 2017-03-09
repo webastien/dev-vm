@@ -1,0 +1,4 @@
+- name: Copy minimal starter files to {{ domain }}
+  copy: src="{{ configuration.starters['minimal'] }}/{{ item }}" dest="{{ siteRootDir }}/{{ item }}"
+  with_items: [ index.html, script.js, styles.css ]
+

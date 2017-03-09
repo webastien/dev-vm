@@ -1,46 +1,47 @@
-# This VM will build sites defined here, here is some examples.
-#
-# The most basic:
-# Simply add an entry with an empty hash. The entry name is the main domain
-#
-# (by default, see starters.yml)
-# This one will not have associated DB and its content will be a phpinfo() by default.
-# In fact, this is the key "starter" which falls back to "empty", (by default, again)
-# so it's the same as adding "starter: empty" or "starter: a-starter-not-found".
-#
-# By default, only "empty" (this one), adminer, "drupal7" and "drupal8" are implemented.
-# Take a look at files in "starters" folder, and eventualy add you ones to yours/starters.
-phpinfo.seb: {}
+vhosts:
+  # This VM will build sites defined here, here is some examples.
+  #
+  # The most basic:
+  # Simply add an entry with an empty hash. The entry name is the main domain
+  #
+  # (by default, see starters.yml)
+  # This one will not have associated DB and its content will be a phpinfo() by default.
+  # In fact, this is the key "starter" which falls back to "empty", (by default, again)
+  # so it's the same as adding "starter: empty" or "starter: a-starter-not-found".
+  #
+  # By default, only "empty" (this one), adminer, "drupal7" and "drupal8" are implemented.
+  # Take a look at files in "starters" folder, and eventualy add you ones to yours/starters.
+  phpinfo.seb: {}
 
-# Very basic with the simple starter "adminer"
-adminer.seb: { starter: adminer }
+  # Very basic with the simple starter "adminer"
+  adminer.seb: { starter: adminer }
 
-# Here is the "full" example:
-#
-# db_name: Name of associated database, falls back to domain name, without tld.
-#          Dots in resulting db_name (sub-domains) are replaced by underscores.
-#   example: "foo.bar.baz" domain will produces "foo_bar" db_name.
-#
-# db_user / db_pass are respectively the username and the password to connect to it.
-#
-# The database and the user (full access granted on it) will be created automaticaly.
-drupal8.seb:
-  starter: drupal8
-  modules: [ devel, bootstrap ] # Optional list of Drupal modules / themes
-  db_name: drupal8  # Read above
-  db_user: drupal8  # If omitted, take the "db_name" value
-  db_pass: drupal8  # If omitted, the password is null
-  aliases:
-    - www.drupal8.seb  # Aliases are optional
-    -  fr.drupal8.seb
-    -  en.drupal8.seb
-  # Arguments passed to drush site-install, default to --site-name=<domain> --account-pass=admin
-  drush_si_args:  --account-pass=admin --locale=fr --site-name="Drupal8 starter" # --db-url always passed
-  drush_commands:  # (optional) List of drush commands executed after site has been installed
-    - config-set system.theme default bootstrap  # Those commands are executed after "drush pm-enable"
+  # Here is the "full" example:
+  #
+  # db_name: Name of associated database, falls back to domain name, without tld.
+  #          Dots in resulting db_name (sub-domains) are replaced by underscores.
+  #   example: "foo.bar.baz" domain will produces "foo_bar" db_name.
+  #
+  # db_user / db_pass are respectively the username and the password to connect to it.
+  #
+  # The database and the user (full access granted on it) will be created automaticaly.
+  drupal8.seb:
+    starter: drupal8
+    modules: [ devel, bootstrap ] # Optional list of Drupal modules / themes
+    db_name: drupal8  # Read above
+    db_user: drupal8  # If omitted, take the "db_name" value
+    db_pass: drupal8  # If omitted, the password is null
+    aliases:
+      - www.drupal8.seb  # Aliases are optional
+      -  fr.drupal8.seb
+      -  en.drupal8.seb
+    # Arguments passed to drush site-install, default to --site-name=<domain> --account-pass=admin
+    drush_si_args:  --account-pass=admin --locale=fr --site-name="Drupal8 starter" # --db-url always passed
+    drush_commands:  # (optional) List of drush commands executed after site has been installed
+      - config-set system.theme default bootstrap  # Those commands are executed after "drush pm-enable"
 
-# A more simple example of site using a drupal7 starter...
-drupal7.seb:
-  starter: drupal7
-  aliases: [ www.drupal7.seb ]
+  # A more simple example of site using a drupal7 starter...
+  drupal7.seb:
+    starter: drupal7
+    aliases: [ www.drupal7.seb ]
 

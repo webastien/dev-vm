@@ -21,10 +21,7 @@ Actualy, 2 Vagrant plugins are also required:
 * [Vagrant Host Manager](https://github.com/devopsgroup-io/vagrant-hostmanager)
 * [Vagrant Auto-network](https://github.com/oscar-stack/vagrant-auto_network)
 
-The first time you play the Vagrantfile, they will be automaticaly installed. Note a third one is not required but strongly recommanded:
-[vagrant-cachier](https://github.com/fgrehm/vagrant-cachier).
-
-You vill be prompted to install it, but it's suggested not required.
+The first time you play the Vagrantfile, they will be automaticaly installed. Note a third one is not required but strongly recommanded: [vagrant-cachier](https://github.com/fgrehm/vagrant-cachier). You vill be prompted to install it, but it's suggested not required.
 
 ## What's in the box?
 * [Debian](http://debian.org) 8 (Jessie) with VB guest additions (*), [Dotdeb](https://www.dotdeb.org) and non-free packages repositories are activated
