@@ -36,18 +36,25 @@ end
 Vagrant.require_version ">= #{configuration['vagrant']['minimal_version']}"
 # Ensure required plugins are present, try to install if not
 configuration['vagrant']['required_plugins'].each do |plugin|
-  if !Vagrant.has_plugin? plugin
+  if !Vagrant.has_plugin?(plugin)
     print  "Plugin #{plugin} is missing, try to install it..."
     system "vagrant plugin install #{plugin}"
-    abort  "Unable to install '#{plugin}'." unless Vagrant.has_plugin? plugin
+    abort  "Unable to install '#{plugin}'." unless Vagrant.has_plugin?(plugin)
   end
 end
+# Load list of ignored plugins
+ignored_plugins = File.exist?("#{current_dir}/configuration/yours/vagrant-plugins-ignored.yml")? \
+                    YAML.load_file("#{current_dir}/configuration/yours/vagrant-plugins-ignored.yml"): []
 # Check suggested plugins are present, ask for install if not
 configuration['vagrant']['suggested_plugins'].each do |plugin|
-  if !Vagrant.has_plugin? plugin
-    print "Plugin #{plugin} is missing, it's not required but suggested. Install it? [y/n] "
+  if !Vagrant.has_plugin?(plugin) && !ignored_plugins.include?(plugin)
+    print "Plugin #{plugin} is missing, it's not required but suggested. Install it? [y/n/never] "
     prompt = STDIN.gets.chomp
     system "vagrant plugin install #{plugin}" if prompt == 'y'
+    # Add the plugin to the ignore list if the user denied it
+    if prompt == 'never'; ignored_plugins.push(plugin)
+      File.write "#{current_dir}/configuration/yours/vagrant-plugins-ignored.yml", YAML.dump(ignored_plugins)
+    end
   end
 end
 # Configure the virtual machine

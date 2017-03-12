@@ -9,4 +9,5 @@ required_plugins:
 # List all plugins suggested (ask for auto-installed if not present)
 suggested_plugins:
   - vagrant-cachier
+  - vagrant-scp
 

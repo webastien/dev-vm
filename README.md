@@ -21,7 +21,15 @@ Actualy, 2 Vagrant plugins are also required:
 * [Vagrant Host Manager](https://github.com/devopsgroup-io/vagrant-hostmanager)
 * [Vagrant Auto-network](https://github.com/oscar-stack/vagrant-auto_network)
 
-The first time you play the Vagrantfile, they will be automaticaly installed. Note a third one is not required but strongly recommanded: [vagrant-cachier](https://github.com/fgrehm/vagrant-cachier). You vill be prompted to install it, but it's suggested not required.
+**The first time you play the Vagrantfile, they will be automaticaly installed.**
+
+Suggested vagrant plugins:
+* [vagrant-cachier](https://github.com/fgrehm/vagrant-cachier)
+* [vagrant-scp](https://github.com/invernizzi/vagrant-scp)
+
+**You vill be prompted to install it, you can accept (y) refuse once (n) or type "never".**
+
+**Note:** Choosing "never" add the plugin in `configuration/yours/vagrant-plugins-ignored.yml`. It's a simple YAML file you can edit or remove. All required plugins will not be affected by this one, only suggested. So, if you had choose "never" and change your mind, you just have to suppress the plugin name from this file. The next time you, it will be suggested again.
 
 ## What's in the box?
 * [Debian](http://debian.org) 8 (Jessie) with VB guest additions (*), [Dotdeb](https://www.dotdeb.org) and non-free packages repositories are activated
