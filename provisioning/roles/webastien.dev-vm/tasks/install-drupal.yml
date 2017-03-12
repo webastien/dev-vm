@@ -1,5 +1,8 @@
 - name:     Define the path where Drupal will be downloaded
-  set_fact: dlPath="{{ configuration.vm.dlFolder }}"
+  set_fact: dlPath="{{ configuration.vm.dlFolder }}/drupal-sources"
+
+- name: Create the download directory
+  file: path="{{ dlPath }}" state=directory
 
 - name:  Download Drupal {{ version }} sources
   shell: drush dl --default-major={{ version }} --destination={{ dlPath }} --drupal-project-rename=drupal{{ version }} creates={{ dlPath }}/drupal{{ version }}
@@ -28,7 +31,7 @@
       - si --db-url={{ db_url }} {{ drush_si_args }}
       - pm-enable {{ site.modules | default([]) | join(' ') }}
 
-- name:  Install {{ domain }} using drush
-  shell: drush -y {{ item }} chdir="{{ siteRootDir }}"
+- name:       Install {{ domain }} using drush
+  shell:      drush -y {{ item }} chdir="{{ siteRootDir }}"
   with_items: "{{ drush_commands | union(site.drush_commands | default([])) }}"
 

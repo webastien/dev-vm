@@ -1,14 +1,14 @@
-- name: Check if Drush is already installed
-  stat: path="{{ config.binary }}"
+- name:     Check if Drush is already installed
+  stat:     path="{{ config.binary }}"
   register: drush
 
 - name:     Define the path where Drush will be downloaded
   set_fact: dlPath="{{ configuration.vm.dlFolder }}/drush"
   when:     not drush.stat.exists
 
-- name: Check if Drush has already been downloaded
-  stat: path="{{ dlPath }}"
-  when: not drush.stat.exists
+- name:     Check if Drush has already been downloaded
+  stat:     path="{{ dlPath }}"
+  when:     not drush.stat.exists
   register: downloaded
 
 - name: Create the target directory

@@ -1,14 +1,14 @@
-- name: Check if Composer is already installed
-  stat: path="{{ config.binary }}"
+- name:     Check if Composer is already installed
+  stat:     path="{{ config.binary }}"
   register: composer
 
 - name:     Define the path where Composer installer will be downloaded
-  set_fact: dlPath="{{ configuration.vm.dlFolder }}/install-composer.php"
+  set_fact: dlPath="{{ configuration.vm.dlFolder }}/composer-installer.php"
   when:     not composer.stat.exists
 
-- name: Check if Composer installer has already been downloaded
-  stat: path="{{ dlPath }}"
-  when: not composer.stat.exists
+- name:     Check if Composer installer has already been downloaded
+  stat:     path="{{ dlPath }}"
+  when:     not composer.stat.exists
   register: downloaded
 
 - name:    Download Composer installer
@@ -16,7 +16,7 @@
   when:    not composer.stat.exists and not downloaded.stat.exists
 
 - name:   Run Composer installer
-  shell:  php install-composer.php chdir="{{ configuration.vm.dlFolder }}"
+  shell:  php composer-installer.php chdir="{{ configuration.vm.dlFolder }}"
   when:   not composer.stat.exists
 
 - name:   Install Composer binary in the right place

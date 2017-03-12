@@ -8,11 +8,11 @@
   shell: drush -y pm-enable l10n_update chdir="{{ siteRootDir }}"
   when:  site_lang != '' and configuration.extras.config.drush.language
 
-- name:  Activate language {{ site_lang }} for {{ domain }}
+- name:  Activate language {{ site_lang | default('en') }} for {{ domain }}
   shell: drush -y langadd {{ site_lang }} && drush -y langdef {{ site_lang }} chdir="{{ siteRootDir }}"
   when:  site_lang != '' and configuration.extras.config.drush.language
 
-- name:  Update {{ site_lang }} translations for {{ domain }}
+- name:  Update {{ site_lang | default('en') }} translations for {{ domain }}
   shell: drush -y l10n-update-refresh && drush -y l10n-update chdir="{{ siteRootDir }}"
   when:  site_lang != '' and configuration.extras.config.drush.language
 

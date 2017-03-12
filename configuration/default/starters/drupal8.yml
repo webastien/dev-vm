@@ -1,9 +1,9 @@
 # QUICKFIX: Should not be done, but seems there is a bug, @see https://github.com/drush-ops/drush/issues/2462
-- name:  Check the current site name
-  shell: drush cget --format=string system.site name chdir="{{ siteRootDir }}"
+- name:     Check the current site name
+  shell:    drush cget --format=string system.site name chdir="{{ siteRootDir }}"
   register: site_name
 
-- name: Check the site name defined in config
+- name:     Check the site name defined in config
   set_fact: wanted_name="{{ drush_si_args | regex_search('--site-name=(.*?)((\s+--[a-z\-]+=.*)|$)', '\\1')  }}"
 - set_fact: wanted_name="{{ wanted_name[0] if wanted_name[0] is defined else '' }}"
 
@@ -15,8 +15,8 @@
 - name:     Initialize {{ domain }} trusted hosts
   set_fact: trusted_hosts="{{ [ domain ] | union(site.aliases | default([])) | map('replace', '.', '\\.') | list }}"
 
-- name: Get informations about {{ siteRootDir }}/sites/default directory
-  stat: path="{{ siteRootDir }}/sites/default"
+- name:     Get informations about {{ siteRootDir }}/sites/default directory
+  stat:     path="{{ siteRootDir }}/sites/default"
   register: sites_default
 
 - name:     Keep the current mode of {{ siteRootDir }}/sites/default for later use
@@ -37,7 +37,7 @@
 - name: Secure {{ siteRootDir }}/sites/default/files with htaccess
   copy: src={{ configuration.templates['d8-files-htaccess'] }} dest="{{ siteRootDir }}/sites/default/files/.htaccess" mode=0444
 
-- name:  Activate Drupal console
+- name:  Activate Drupal console for {{ domain }}
   shell: chdir="{{ siteRootDir }}" {{ item }}
   with_items:
     - composer require drupal/console:~1.0 --prefer-dist --optimize-autoloader

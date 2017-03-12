@@ -1,16 +1,25 @@
-- name:     Define the path where the repository will be downloaded
-  set_fact: repoPath="{{ configuration.vm.dlFolder }}/{{ repo.src | basename }}"
+- name: Initialize the repository variable for {{ plugin }}
+  set_fact:
+    repo:
+      src: https://github.com/{{ plugin }}
+      map:
+        .: .vim/bundle/{{ plugin.split('/')[1] }}
+  when: plugin is defined
 
-- name: Check if the repository has already been downloaded
-  stat: path="{{ repoPath }}"
+- name:     Define the path where the repository will be downloaded
+  set_fact: repoPath="{{ configuration.vm.dlFolder }}/github-repositories/{{ repo.src | basename }}"
+
+- name:     Check if the repository has already been downloaded
+  stat:     path="{{ repoPath }}"
   register: downloaded
 
-- name: Download the repository sources to {{ repoPath }}
-  git:  repo="{{ repo.src }}" dest="{{ repoPath }}"
-  when: not downloaded.stat.exists
+- name:     Download the repository sources to {{ repoPath }}
+  git:      repo="{{ repo.src }}" dest="{{ repoPath }}"
+  when:     not downloaded.stat.exists
 
 # NOTE: Can't use Ansible module "copy" with "remote=true" because it doesn't support recursive
-- name:  Copy the sources' parts from repository to the VIm configuration
-  shell: cp -r {{ repoPath }}/{{ item.key }} {{ ansible_env.HOME }}/{{ item.value }}
-  with_dict: "{{ repo.map }}"
+- name:        Copy the needed sources parts from repository to the VIm configuration
+  shell:       cp -r {{ repoPath }}/{{ part.key }} {{ ansible_env.HOME }}/{{ part.value }}
+  loop_control: { loop_var: part }
+  with_dict:  "{{ repo.map }}"
 

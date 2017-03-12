@@ -1,14 +1,14 @@
-- name: Check if Drupal console is already installed
-  stat: path="{{ config.binary }}"
+- name:     Check if Drupal console is already installed
+  stat:     path="{{ config.binary }}"
   register: drupal
 
 - name:     Define the path where Drupal console will be downloaded
   set_fact: dlPath="{{ configuration.vm.dlFolder }}/drupalConsole"
   when:     not drupal.stat.exists
 
-- name: Check if Drupal console has already been downloaded
-  stat: path="{{ dlPath }}"
-  when: not drupal.stat.exists
+- name:     Check if Drupal console has already been downloaded
+  stat:     path="{{ dlPath }}"
+  when:     not drupal.stat.exists
   register: downloaded
 
 - name:    Download Drupal console binary
@@ -20,8 +20,8 @@
   when:   not drupal.stat.exists
   become: true
 
-- name: Check if Drupal console has already been initialized
-  stat: path="{{ config.folder }}/config.yml"
+- name:     Check if Drupal console has already been initialized
+  stat:     path="{{ config.folder }}/config.yml"
   register: drupalInit
 
 - name:  Initialize Drupal console
@@ -37,7 +37,7 @@
   when: completion and not drupalInit.stat.exists
 # QUICKFIX / end
 
-- name: Activate Drupal console's command autocompletion
+- name: Activate Drupal console commands autocompletion
   lineinfile:
     dest:        "{{ ansible_env.HOME }}/.bashrc"
     line:        source "{{ config.folder }}/console.rc" 2>/dev/null

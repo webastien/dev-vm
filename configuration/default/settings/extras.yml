@@ -2,8 +2,8 @@ enabled:
   - dotFiles
   - vimConfig
   - composer
-  - drush
-  - drupalConsole
+  - drush          # Require composer, so must be place after
+  - drupalConsole  # Not installed by composer, but still requires it for using it in a Drupal installation
 
 config:
   dotFiles:
@@ -17,14 +17,14 @@ config:
       bashrc: export PS1="\[$(tput bold)\]\[\033[48;5;22m\] \h \[$(tput sgr0)\]\[\033[38;5;251m\]\[\033[48;5;237m\] \w \[$(tput sgr0)\] "
 
   vimConfig:
-    # List of git repositories to clone, each with a mapping: { <path-in-repo>: <path-in-vm-relative-to-home> }
+    # List of git repositories to clone to build the custom VIm config...
     repositories:
-      - src: https://github.com/webastien/vim.git
-        map: { .vimrc: .vimrc, .vim: .vim }
-      - src: https://github.com/VundleVim/Vundle.vim.git
-        map: { .: .vim/bundle/Vundle.vim }
-    # Commands executed directly in VIm
-    commands: [ PluginInstall, PluginUpdate ]
+      - src: https://github.com/webastien/vim.git # (can be any git url, not only a github)
+        map: { .vimrc: .vimrc, .vim: .vim }       # Mapping for repository parts to copy, format: { <path-in-repo>: <path-in-vm-relative-to-home> }
+    # Regex (`grep -Po` command) used to extract Vundle plugins' url from .vimrc, false to avoid this step
+    pluginsRegex: (?<=Plugin ')([^']*)
+    # Commands executed directly in VIm after all repository (and plugins) have been copied
+    commands: [ PluginClean, PluginInstall, PluginUpdate ]
 
   composer:
     source:  https://getcomposer.org/installer # URL to get composer
@@ -38,7 +38,7 @@ config:
 
   drupalConsole:
     source:  https://drupalconsole.com/installer # URL to get Drupal console installer
-    timeout: 30 # Giving an higher value than default (10) because the server is sometimes slow...
+    timeout: 30 # Giving a higher value than default (10) because the server is sometimes slow...
     binary:  /usr/local/bin/drupal  # Path to Drupal console binary
     folder:  /home/vagrant/.console # Folder to install Drupal console
 

@@ -1,19 +1,37 @@
-- name:     Look for a .vimrc file
-  stat:     path="{{ ansible_env.HOME }}/.vimrc"
-  register: customVimRC
+- name:         Look for a .vimrc file
+  stat:         path="{{ ansible_env.HOME }}/.vimrc"
+  register:     customVimRC
 
-- name:     Look for a .vim directory
-  stat:     path="{{ ansible_env.HOME }}/.vimrc"
-  register: customVimDir
+- name:         Look for a .vim directory
+  stat:         path="{{ ansible_env.HOME }}/.vimrc"
+  register:     customVimDir
 
-- name:     Check if VIm has a custom configuration already installed
-  set_fact: customVim={{ customVimRC.stat.exists or (customVimDir.stat.exists and customVimDir.stat.isdir) }}
+- name:         Check if VIm has a custom configuration already installed
+  set_fact:     customVim={{ customVimRC.stat.exists or (customVimDir.stat.exists and customVimDir.stat.isdir) }}
 
 - name:         Install VIm configuration...
   include:      install-vim-repository.yml
   with_items:   "{{ config.repositories }}"
   loop_control: { loop_var: repo }
   when:         not customVim
+
+- name:         List required plugins from .vimrc
+  shell:        grep -Po "{{ config.pluginsRegex }}" {{ ansible_env.HOME }}/.vimrc
+  when:         not customVim and config.pluginsRegex
+  register:     vimPlugins
+  failed_when:  vimPlugins.rc > 1
+  changed_when: false
+
+- name:         Checkout VIm plugins...
+  include:      install-vim-repository.yml plugin={{ item }}
+  with_items:   "{{ vimPlugins.stdout_lines }}"
+  when:         not customVim and config.pluginsRegex and vimPlugins.stdout_lines[0] is defined
+
+- name:         Install Vundle plugins...
+  include:      install-vim-repository.yml
+  with_items:   "{{ vundlePlugins }}"
+  loop_control: { loop_var: repo }
+  when:         not customVim and config.pluginsRegex and vundlePlugins[0] is defined
 
 - name:         Execute VIM commands...
   shell:        vim -E -s -c "source {{ ansible_env.HOME }}/.vimrc" -c "{{ config.commands | join('" -c "') }}" -c "qa!"
