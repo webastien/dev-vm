@@ -23,6 +23,8 @@ Actualy, 2 Vagrant plugins are also required:
 
 **The first time you play the Vagrantfile, they will be automaticaly installed.**
 
+**Note:** Each time you up / down the VM, Vagrant Host Manager will ask your password to update the `/etc/hosts` file. If you don't want to type it again and again, follow this [procedure](https://github.com/devopsgroup-io/vagrant-hostmanager#passwordless-sudo). I recommand because with it, this lovely plugin becomes transparent.
+
 Suggested vagrant plugins:
 * [vagrant-cachier](https://github.com/fgrehm/vagrant-cachier)
 * [vagrant-scp](https://github.com/invernizzi/vagrant-scp)
