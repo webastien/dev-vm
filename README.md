@@ -29,7 +29,7 @@ Suggested vagrant plugins:
 
 **You vill be prompted to install it, you can accept (y) refuse once (n) or type "never".**
 
-**Note:** Choosing "never" add the plugin in `configuration/yours/vagrant-plugins-ignored.yml`. It's a simple YAML file you can edit or remove. All required plugins will not be affected by this one, only suggested. So, if you had choose "never" and change your mind, you just have to suppress the plugin name from this file. The next time you, it will be suggested again.
+**Note:** Choosing "never" add the plugin in `configuration/yours/vagrant-plugins-ignored.yml`. It's a simple YAML file you can edit or remove. All required plugins will not be affected by this one, only suggested. So, if you had choose "never" and change your mind, you just have to suppress the plugin name from this file. The next time you up / provision, it will be suggested again.
 
 ## What's in the box?
 * [Debian](http://debian.org) 8 (Jessie) with VB guest additions (\*), [Dotdeb](https://www.dotdeb.org) and non-free packages repositories are activated
