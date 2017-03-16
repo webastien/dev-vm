@@ -34,6 +34,10 @@ end
 end
 # Fix the minimal version of vagrant to execute this script
 Vagrant.require_version ">= #{configuration['vagrant']['minimal_version']}"
+# Ensure required files are present, otherwise tell the user and stop
+missing_files = []; configuration['vagrant']['required_files'].each do |file|
+  if !File.exist?("#{current_dir}/#{file}"); missing_files.push(file); print "File « #{file} » is missing.\n"; end
+end; if missing_files.size > 0; exit; end
 # Ensure required plugins are present, try to install if not
 configuration['vagrant']['required_plugins'].each do |plugin|
   if !Vagrant.has_plugin?(plugin)
@@ -128,7 +132,7 @@ Vagrant.configure(configuration['vagrant']['config_version']) do |config|
       ansible.playbook = "#{current_dir}/provisioning/playbook.yml"
     end
     # Send the generated configuration to Ansible
-    ansible.extra_vars = { configuration: configuration }
+    ansible.extra_vars = { configuration: configuration, vagrant_root: current_dir }
   end
 end
 

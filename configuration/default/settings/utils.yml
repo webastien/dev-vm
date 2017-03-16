@@ -2,10 +2,9 @@
 nonFreePackages: true
 
 packages:
-  - ctags
-  - git
-  - vim
-  - curl
-  - unzip
   - bash-completion
+  - curl
+  - git
+  - unzip
+  - vim
 

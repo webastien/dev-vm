@@ -1,10 +1,12 @@
 <VirtualHost *:80>
   ServerName  {{ domain }}
-  {% if aliases %}
-  ServerAlias {{ aliases | join(' ') }}
+  {% if vhost.aliases is defined %}
+  ServerAlias {{ vhost.aliases | join(' ') }}
   {% endif %}
 
-  DocumentRoot {{ siteRootDir }}
+  DocumentRoot {{ siteRootDir }}/{{ vhost.rootDir | default('') }}
+  CustomLog    {{ logsDir }}/{{ domain }}-access.log combined
+  ErrorLog     {{ logsDir }}/{{ domain }}-error.log
 
   <Directory {{ siteRootDir }}>
     Options Indexes FollowSymLinks

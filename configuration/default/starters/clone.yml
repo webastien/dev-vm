@@ -1,0 +1,19 @@
+- name:     Define the path where the repository will be downloaded
+  set_fact: repoPath="{{ configuration.vm.dlFolder }}/github-repositories/{{ domain }}"
+
+- name:     Check if the repository has already been downloaded
+  stat:     path="{{ repoPath }}"
+  register: downloaded
+
+- name:     Clone the repository sources to {{ repoPath }}
+  git:      repo="{{ site.gitRepo.url }}" dest="{{ repoPath }}" version="{{ site.gitRepo.version | default('HEAD') }}" accept_hostkey=true
+  when:     not downloaded.stat.exists
+
+- name:     Remove previous {{ domain }} root directory
+  file:     path='{{ siteRootDir }}' state=absent
+
+# NOTE: Can't use Ansible module "copy" with "remote=true" because it doesn't support recursive
+- name:     Copy the repository to {{ domain }} root directory
+  shell:    cp -r {{ repoPath }} {{ siteRootDir }}
+  become:   "{{ ansible_env.USER }}"
+

@@ -2,6 +2,7 @@
 defaultVhost: false
 # Directy where sites will be installed
 rootDirectory: /home/vagrant/www
+logsDirectory: /var/log/apache2
 #  List of apache modules to enable
 modules:
   - rewrite

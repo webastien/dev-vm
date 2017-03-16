@@ -10,4 +10,6 @@ required_plugins:
 suggested_plugins:
   - vagrant-cachier
   - vagrant-scp
+# List all necessary files to perform the vagrant up / provision
+required_files: [] # (all entries are relative to Vagrant file path)
 

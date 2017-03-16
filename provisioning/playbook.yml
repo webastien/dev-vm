@@ -1,10 +1,8 @@
 - hosts: all
 
   pre_tasks:
-    - name: Check ansible version
-      assert:
-        that: ansible_version.full | version_compare('2.2', '>=')
-        msg:  You need to update Ansible!
+    - name:      Check ansible version
+      assert: { that: "ansible_version.full | version_compare('2.2', '>=')", msg:  You need to update Ansible! }
     # When cachier is enabled, you can define a list of dirs in vm.yml which will be re-assigned to vagrant user.
     # Useful for generic buckets because they can create folders as root. @see vm.yml for a better explanation.
     - name:       Fix ownerships of Vagrant cachier generic buckets...
@@ -13,7 +11,9 @@
       with_items: "{{ configuration.vm.cachier.fixOwnership }}"
       become:     true
 
-  roles:
-    # Attach the main role to install the VM
-    - webastien.dev-vm
+  roles: [ webastien.dev-vm ] # Attach the main role to install the VM
+  tasks:                      # An optional taskfile can be added in configuration/your/tasks/main.yml, if exists play it.
+    - { name: Define optional user task file path, set_fact:  "userTaskPath={{ vagrant_root }}/configuration/yours/tasks/main.yml" }
+    - { name: Check if user task file exists...,   local_action: "stat path={{ userTaskPath }}", register: userTaskFile }
+    - { name: Include user tasks file,             include: "{{ userTaskPath }}",                    when: userTaskFile.stat.exists }
 

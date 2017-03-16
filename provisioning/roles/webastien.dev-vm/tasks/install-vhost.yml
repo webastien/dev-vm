@@ -1,8 +1,8 @@
 - name:     Define {{ domain }} root directory
   set_fact: siteRootDir={{ configuration.apache.rootDirectory }}/{{ domain }}
 
-- name: Create {{ domain }} root directory
-  file: path={{ siteRootDir }} state=directory
+- name:     Create {{ domain }} root directory
+  file:     path={{ siteRootDir }} state=directory
 
 - name:     Check if {{ domain }} already has a vhost
   stat:     path=/etc/apache2/sites-available/{{ domain }}.conf
