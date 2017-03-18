@@ -22,7 +22,7 @@ config:
       - src: https://github.com/webastien/vim.git # (can be any git url, not only a github)
         map: { .vimrc: .vimrc, .vim: .vim }       # Mapping for repository parts to copy, format: { <path-in-repo>: <path-in-vm-relative-to-home> }
     # Regex (`grep -Po` command) used to extract Vundle plugins' url from .vimrc, false to avoid this step
-    pluginsRegex: (?<=Plugin ')([^']*)
+    pluginsRegex: (?<=^Plugin ')([^']*)
     # Commands executed directly in VIm after all repository (and plugins) have been copied
     commands: [ PluginClean, PluginInstall, PluginUpdate ]
 
